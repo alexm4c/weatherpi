@@ -4,87 +4,21 @@ import time
 from datetime import datetime
 
 from darksky import forecast
-import Adafruit_CharLCD as LCD
-import RPi.GPIO as GPIO
-
 from repeated_timer import RepeatedTimer
+from lcd import LCD
 
 API_KEY = '3263712d1c1452735faa19a7f9b90edc'
 MELBOURNE = (-37.758778, 144.991722)
 OPTIONS = {'units': 'si', 'excludes': 'minutely,daily,alerts,flags'}
 REFRESH_TIME = 300
 
-# LCD pin configuration
-lcd_rs = 27
-lcd_en = 22
-lcd_d4 = 25
-lcd_d5 = 24
-lcd_d6 = 23
-lcd_d7 = 18
-
-# LCD dimensions
-lcd_columns = 20
-lcd_rows    = 4
-
-# Initialise LCD
-lcd = LCD.Adafruit_CharLCD(
-	lcd_rs,
-	lcd_en,
-	lcd_d4,
-	lcd_d5,
-	lcd_d6,
-	lcd_d7,
-	lcd_columns,
-	lcd_rows)
-
-display_string = ''
-scroll_depth = 0
-scroll_button = 4
-led_button = 17
-led_switch = 5
-led_is_on = True
-
-def format_for_LCD(message):
-	# Slice a message exactly as long as the LCD has characters beginning at the scroll_depth-th row
-	string = message[scroll_depth*lcd_columns:scroll_depth*lcd_columns+(lcd_columns*lcd_rows)]
-	string = string.ljust(lcd_columns*lcd_rows)
-	string = '\n'.join([string[i:i+lcd_columns] for i in range(0, len(string), lcd_columns)])
-	return string
-
-def scroll(channel):
-	global scroll_depth
-	global display_string
-	# Calculate maximum scroll depth based on display_string length
-	if scroll_depth > (len(display_string) / lcd_columns) - lcd_rows:
-		scroll_depth = 0
-	else:
-		scroll_depth += 1
-
-def led_on_off(channel):
-	global led_is_on
-	if led_is_on:
-		GPIO.output(led_switch, GPIO.HIGH)
-	else:
-		GPIO.output(led_switch, GPIO.LOW)
-	led_is_on = not led_is_on
-
-# Setup GPIO 
-GPIO.setmode(GPIO.BCM)
-
-GPIO.setup(led_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(led_switch, GPIO.OUT)
-GPIO.setup(scroll_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-GPIO.output(led_switch, GPIO.HIGH)
-
-GPIO.add_event_detect(led_button, GPIO.FALLING, callback=led_on_off, bouncetime=300)
-GPIO.add_event_detect(scroll_button, GPIO.FALLING, callback=scroll, bouncetime=300)
-
 # Initialise forcast api
 melbourne = forecast(API_KEY, *MELBOURNE, **OPTIONS)
 
+lcd = LCD()
+
 try:
-	rt = RepeatedTimer(REFRESH_TIME, melbourne.refresh)
+	rt = RepeatedTimer(REFRESH_TIME, melbourne.refresh, **OPTIONS)
 	
 	while(True):
 		
@@ -149,13 +83,11 @@ try:
 		# Format summary
 		display_string += melbourne.currently.summary
 
-		lcd.message(format_for_LCD(display_string))
+		lcd.message(display_string)
 		
 		time.sleep(1)
 
 except KeyboardInterrupt:
 	print("\nexiting...")
-	GPIO.cleanup()
-
 finally:
 	rt.stop()
