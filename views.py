@@ -1,58 +1,126 @@
-from datetime import datetime
+#!/usr/bin/python
 
-def time_view():
-	return '{:%d %b         %H:%M}'.format(datetime.now())
+# Darksky attributes are not present if they are null. So in each instance we 
+# need to check if the attribute exists and if it doesn't, display some empty 
+# string so it's obvious to the user.
+EMPTY = '-'
 
-def temperature_view(forecast):
-	temperature_12hr = [hour.temperature for hour in forecast.hourly][:12]
-	return '{max:2.0f}ßC {current:2.0f}ßC {min:2.0f}ßC      '.format(
-		current = forecast.currently.temperature,
-		max = max(temperature_12hr),
-		min = min(temperature_12hr))
+def max_temp(forecast):
+	string = EMPTY
 
-def precipitation_view(forecast):
-	return '{type:.4} {intensity:04.2f}mm {probability:3.0%}     '.format(
-		type = forecast.currently.precipType.capitalize(),
-		intensity = forecast.currently.precipIntensity,
-		probability = forecast.currently.precipProbability)
+	try:
+		temperature_16hr = [hour.temperature for hour in forecast.hourly][:16]
+		string = '{max:2.0f}ßC'.format(max=max(temperature_16hr))
+	except AttributeError:
+		pass
+	finally:
+		return string
 
-def wind_view(forecast):
-	bearing = ''
-	if forecast.currently.windBearing == None:
-		#API Docs says if windBearing is 0 it isn't returned
-		bearing = "N"
+def min_temp(forecast):
+	string = EMPTY
 
-	elif forecast.currently.windBearing > 337.5 or forecast.currently.windBearing <= 22.5:
-		bearing = "N"
+	try:
+		temperature_16hr = [hour.temperature for hour in forecast.hourly][:16]
+		string = '{min:2.0f}ßC'.format(min=min(temperature_16hr))
+	except AttributeError:
+		pass
+	finally:
+		return string
 
-	elif forecast.currently.windBearing <= 67.5:
-		bearing = "NE"
+def current_temp(forecast):
+	string = EMPTY
 
-	elif forecast.currently.windBearing <= 112.5:
-		bearing = "E"
+	try:
+		string = '{current:2.0f}ßC'.format(current=forecast.currently.temperature)
+	except AttributeError:
+		pass
+	finally:
+		return string
 
-	elif forecast.currently.windBearing <= 157.5:
-		bearing = "SE"
+def precip_type(forecast):
+	string = EMPTY
 
-	elif forecast.currently.windBearing <= 202.5:
-		bearing = "S"
+	try:
+		string = '{type:.4}'.format(type=forecast.currently.precipType.capitalize())
+	except AttributeError:
+		pass
+	finally:
+		return string
 
-	elif forecast.currently.windBearing <= 247.5:
-		bearing = "SW"
+def precip_intensity(forecast):
+	string = EMPTY
 
-	elif forecast.currently.windBearing <= 292.5:
-		bearing = "W"
-	else:
-		bearing = "NW"
+	try:
+		string = '{intensity:04.2f}mm'.format(intensity=forecast.currently.precipIntensity)
+	except AttributeError:
+		pass
+	finally:
+		return string
 
-	return '{speed:4.2f}m/s{bearing:>13}'.format(
-		speed = forecast.currently.windSpeed,
-		bearing = bearing)
+def precip_probability(forecast):
+	string = EMPTY
+
+	try:
+		string = '{probability:3.0%}'.format(probability=forecast.currently.precipProbability)
+	except AttributeError:
+		pass
+	finally:
+		return string
+
+def wind_bearing(forecast):
+	string = EMPTY
+
+	try:
+		if not forecast.currently.windBearing:
+			# API Docs says if windBearing is 0 it isn't returned
+			string = "N"
+
+		elif forecast.currently.windBearing > 337.5 or forecast.currently.windBearing <= 22.5:
+			string = "N"
+
+		elif forecast.currently.windBearing <= 67.5:
+			string = "NE"
+
+		elif forecast.currently.windBearing <= 112.5:
+			string = "E"
+
+		elif forecast.currently.windBearing <= 157.5:
+			string = "SE"
+
+		elif forecast.currently.windBearing <= 202.5:
+			string = "S"
+
+		elif forecast.currently.windBearing <= 247.5:
+			string = "SW"
+
+		elif forecast.currently.windBearing <= 292.5:
+			string = "W"
+		else:
+			string = "NW"
+	except AttributeError:
+		pass
+
+	return string
+
+def wind_speed(forecast):
+	string = EMPTY
+
+	try:
+		string = '{speed:4.2f}m/s'.format(speed=forecast.currently.windSpeed)
+	except AttributeError:
+		pass
+
+	return string
+
+def summary(forecast):
+	string = EMPTY
+
+	try:
+		string = '{}'.format(forecast.currently.summary)
+	except AttributeError:
+		pass
+
+	return string
 
 def no_data_view():
 	return '{:^20}'.format('No forecast data')
-
-def summary_view(forecast):
-	return '{}'.format(forecast.currently.summary)
-
-

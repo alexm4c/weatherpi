@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from time import sleep
+import time
 
 from darksky import forecast
 
@@ -26,12 +26,24 @@ try:
 		if not weather:
 			display_string += views.no_data_view()
 		else:
-			display_string += views.temperature_view(weather)
-			display_string += views.precipitation_view(weather)
-			display_string += views.summary_view(weather)
+			display_string += views.max_temp(weather)
+			display_string += ' '
+			display_string += views.min_temp(weather)
+			display_string += ' '
+			display_string += views.precip_type(weather)
+			display_string += ' '
+			display_string += views.precip_intensity(weather)
+			display_string += ' '
+			display_string += views.precip_probability(weather)
+			display_string += ' '
+			display_string += views.wind_bearing(weather)
+			display_string += ' '
+			display_string += views.wind_speed(weather)
+			display_string += ' '
+			display_string += views.summary(weather)
 
 		lcd.message(display_string)
-		sleep(1)
+		time.sleep(1)
 
 except KeyboardInterrupt:
 	print("\nexiting...")
