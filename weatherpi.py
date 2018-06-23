@@ -15,7 +15,23 @@ REFRESH_TIME = 300
 
 try:	
 	lcd = LCD()
-	
+
+	welcome_animation = (
+	'ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ',
+	'ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ',
+	'ÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ th ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿ',
+	'ÿÿÿÿÿÿÿ     ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ ather ÿÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ     ÿÿÿÿÿÿÿÿ',
+	'ÿÿÿÿÿÿ       ÿÿÿÿÿÿÿÿÿÿÿÿ eatherP ÿÿÿÿÿÿÿÿÿÿÿ         ÿÿÿÿÿÿÿÿÿÿÿÿ       ÿÿÿÿÿÿÿ',
+	'ÿÿÿÿÿ         ÿÿÿÿÿÿÿÿÿÿ WeatherPi ÿÿÿÿÿÿÿÿÿ           ÿÿÿÿÿÿÿÿÿÿ         ÿÿÿÿÿÿ',
+	'ÿÿÿÿ           ÿÿÿÿÿÿÿÿ  WeatherPi  ÿÿÿÿÿÿÿ             ÿÿÿÿÿÿÿÿ           ÿÿÿÿÿ',
+	'ÿÿÿ             ÿÿÿÿÿÿ   WeatherPi   ÿÿÿÿÿ               ÿÿÿÿÿÿ             ÿÿÿÿ',
+	'ÿÿ               ÿÿÿÿ    WeatherPi    ÿÿÿ                 ÿÿÿÿ               ÿÿÿ',
+	'ÿ                 ÿÿ     WeatherPi     ÿ                   ÿÿ                 ÿÿ',
+	'                         WeatherPi                                              ')
+
+	for frame in welcome_animation:
+		lcd.message(frame)
+
 	# Initialise forcast api
 	weather = forecast(API_KEY, *MELBOURNE, **OPTIONS)
 	rtimer = RepeatedTimer(REFRESH_TIME, weather.refresh, **OPTIONS)
