@@ -2,10 +2,12 @@
 
 import time
 
-from darksky import forecast
+import darksky
 
 from rtimer import RepeatedTimer
 from lcd import LCD
+from bpad import Button_Pad
+from led import LED
 import views
 
 API_KEY = '3263712d1c1452735faa19a7f9b90edc'
@@ -13,9 +15,12 @@ MELBOURNE = (-37.758778, 144.991722)
 OPTIONS = {'units': 'si', 'excludes': 'minutely,daily,alerts,flags'}
 REFRESH_TIME = 300
 
-try:	
-	lcd = LCD()
+try:
+	# Init lcd led
+	led = LED()
 
+	# Init lcd
+	lcd = LCD()
 	welcome_animation = (
 	'ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ',
 	'ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ',
@@ -32,8 +37,13 @@ try:
 	for frame in welcome_animation:
 		lcd.message(frame)
 
-	# Initialise forcast api
-	weather = forecast(API_KEY, *MELBOURNE, **OPTIONS)
+	# Init buttons
+	bpad = Button_Pad()
+	bpad.reassign(bpad.BUTTON_1, led.toggle)
+	# bpad.reassign(BUTTON_2, )
+
+	# Init forcast api
+	weather = darksky.forecast(API_KEY, *MELBOURNE, **OPTIONS)
 	rtimer = RepeatedTimer(REFRESH_TIME, weather.refresh, **OPTIONS)
 
 	while(True):
