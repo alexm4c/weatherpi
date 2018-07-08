@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask
 from flask import render_template
 from flask import redirect
@@ -25,20 +27,19 @@ def config():
 				if request.form[key]:
 					redis_store.set(key, function(request.form[key]))
 			except ValueError:
-				error_msg = '{key} must be of type {func}'.format(key=key, func=function)
+				error_msg = 'Error: {key} must be of type {func}'.format(key=key, func=function)
 
 	configuration = {}
 	
 	for key, _ in config_schema.items():
-		key = redis_store.get(key)
-		if key:
+		value = redis_store.get(key)
+		if value:
 			if key == 'api_key':
 				# Obsfucate api key
-				key = '{:*<{len}.5}'.format(key, len=len(key))
-			configuration[key] = key
+				value = '{:*<{len}.5}'.format(value, len=len(value))
+			configuration[key] = value
 		else:
 			configuration[key] = ''
-
 	
 	return render_template('config.html', config=configuration, error=error_msg)
 
