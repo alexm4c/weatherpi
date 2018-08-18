@@ -2,7 +2,6 @@
 
 import RPi.GPIO as GPIO
 
-
 class ButtonPad(object):
 	BUTTON_1 = 5
 	BUTTON_2 = 6

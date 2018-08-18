@@ -8,11 +8,10 @@ from rtimer import RepeatedTimer
 from backlight import Backlight
 from displaycontroller import DisplayController
 from bpad import ButtonPad
-import views
 
 API_KEY = '3263712d1c1452735faa19a7f9b90edc'
 MELBOURNE = (-37.758778, 144.991722)
-OPTIONS = {'units': 'si', 'excludes': 'minutely,daily,alerts,flags'}
+OPTIONS = {'units': 'si'}
 REFRESH_TIME = 300
 
 class App():

@@ -4,7 +4,6 @@ import RPi.GPIO as GPIO
 
 class BackLight(object):
 	
-	
 	def __init__(self):
 		self._PIN = 16
 		self.is_on = True
