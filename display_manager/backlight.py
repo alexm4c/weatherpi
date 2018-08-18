@@ -2,7 +2,7 @@
 
 import RPi.GPIO as GPIO
 
-class LED(object):
+class BackLight(object):
 	
 	
 	def __init__(self):
