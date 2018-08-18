@@ -1,27 +1,25 @@
 #!/usr/bin/python
 
-from redisclient import redisclient
+from redisclient import redis_client
 
-schema = {
-	'api_key': str,
-	'latitude': float,
-	'longitude': float,
-	'refresh_time': int}
+class Config(object):
+	def __init__(self):
+		_schema = {
+			'api_key': str,
+			'latitude': float,
+			'longitude': float,
+			'refresh_time': int
+		}	
+		
+		self._read()
 
-def read():
-	redis = redisclient()
-	config = {}
-	for key, func in schema.items():
-		try:
-			config[key] = func(redis.get(key))
-		except ValueError:
-			raise
-	return config
 
-def write(config):
-	redis = redisclient()
-	for key, func in schema.items():
-		try:
-			redis.set(key, func(config[key]))
-		except ValueError:
-			raise
+	def _read(self):
+		redis = redis_client()
+		config = {}
+		for key, func in self.schema.items():
+			try:
+				config[key] = func(redis.get(key))
+			except ValueError:
+				raise
+		self.__dict__ = config
