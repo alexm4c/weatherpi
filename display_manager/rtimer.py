@@ -10,7 +10,6 @@ class RepeatedTimer(object):
 		self.args = args
 		self.kwargs = kwargs
 		self.is_running = False
-		self.start()
 
 	def _run(self):
 		self.is_running = False
@@ -27,16 +26,8 @@ class RepeatedTimer(object):
 		self._timer.cancel()
 		self.is_running = False
 
+	def __enter__(self):
+		self.start()
 
-if __name__ == '__main__':
-	from time import sleep
-
-	def test(x):
-		print('testing {}'.format(x))
-
-	rt = RepeatedTimer(1, test, "!!!")
-
-	try:
-		sleep(5)
-	finally:
-		rt.stop()
+	def __exit__(self):
+		self.stop()

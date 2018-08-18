@@ -24,12 +24,7 @@ class App():
 		self.darksky = darksky.forecast(self.config.api_key, self.config.latitude, self.config.longitude, **OPTIONS)
 
 	def run(self):
-		rtimer = RepeatedTimer(self.config.refresh_time, self.darksky.refresh, **OPTIONS)
-		try:
+		with RepeatedTimer(self.config.refresh_time, self.darksky.refresh, **OPTIONS):
 			while(True):
 				self.display_controller.update(self.darksky)
 				time.sleep(1)
-		except KeyboardInterrupt:
-			print("\nexiting...")
-		finally:
-			rtimer.stop()
