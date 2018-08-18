@@ -10,27 +10,24 @@ from displaycontroller import DisplayController
 from bpad import ButtonPad
 from config import Config
 
-API_KEY = '3263712d1c1452735faa19a7f9b90edc'
-MELBOURNE = (-37.758778, 144.991722)
 OPTIONS = {'units': 'si'}
-REFRESH_TIME = 300
 
 class App():
 	def __init__(self):
-		backlight = Backlight()
-		display_controller = DisplayController()
-		display_controller.welcome()
-		bpad = Button_Pad()
-		bpad.reassign(bpad.BUTTON_1, backlight.toggle)
-		bpad.reassign(bpad.BUTTON_2, lcd.scroll)
-		config = Config()
-		weather = darksky.forecast(config.api_key, config.coordinates, **OPTIONS)
+		self.backlight = Backlight()
+		self.display_controller = DisplayController()
+		self.display_controller.welcome()
+		self.bpad = ButtonPad()
+		self.bpad.reassign(self.bpad.BUTTON_1, self.backlight.toggle)
+		self.bpad.reassign(self.bpad.BUTTON_2, self.display_controller.scroll)
+		self.config = Config()
+		self.darksky = darksky.forecast(self.config.api_key, self.config.latitude, self.config.longitude, **OPTIONS)
 
 	def run(self):
+		rtimer = RepeatedTimer(self.config.refresh_time, self.darksky.refresh, **OPTIONS)
 		try:
-			rtimer = RepeatedTimer(config.refresh_time, weather.refresh, **OPTIONS)
 			while(True):
-				display_controller.update()
+				self.display_controller.update(self.darksky)
 				time.sleep(1)
 		except KeyboardInterrupt:
 			print("\nexiting...")

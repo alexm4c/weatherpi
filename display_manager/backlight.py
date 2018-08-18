@@ -2,7 +2,7 @@
 
 import RPi.GPIO as GPIO
 
-class BackLight(object):
+class Backlight(object):
 	
 	def __init__(self):
 		self._PIN = 16
