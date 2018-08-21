@@ -3,4 +3,7 @@
 from app import App
 
 app = App()
-app.run()
+try:
+	app.run()
+except KeyboardInterrupt:
+	print('exiting...')

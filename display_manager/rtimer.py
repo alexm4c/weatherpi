@@ -29,5 +29,5 @@ class RepeatedTimer(object):
 	def __enter__(self):
 		self.start()
 
-	def __exit__(self):
+	def __exit__(self, exception_type, exception_value, traceback):
 		self.stop()
